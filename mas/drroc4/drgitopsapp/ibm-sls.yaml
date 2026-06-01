@@ -1,0 +1,26 @@
+merge-key: "mas/drroc4/drgitopsapp"
+
+ibm_sls:
+  sls_channel: CHANGE_ME_SLS_CHANNEL
+  sls_entitlement_file: "<path:secret/data/mas/drroc4/drgitopsapp/license#license_file>"
+  ibm_entitlement_key: "<path:secret/data/mas/drroc4/entitlement#image_pull_secret_b64>"
+  sls_install_plan: Automatic
+  icr_cp_open: "icr.io/cpopen"
+  run_sync_hooks: false
+
+  mongodb_provider: "community"
+  user_action: "add"
+  sls_mongo_username: "<path:secret/data/mas/drroc4/drgitopsapp/sls-mongo#username>"
+  sls_mongo_password: "<path:secret/data/mas/drroc4/drgitopsapp/sls-mongo#password>"
+  sls_mongo_secret_name: sls-mongo-credentials
+  mongo_spec:
+    authMechanism: DEFAULT
+    configDb: admin
+    secretName: sls-mongo-credentials
+    retryWrites: false
+    nodes:
+      - host: CHANGE_ME_SLS_MONGO_HOST
+        port: 27017
+    certificates:
+      - alias: ca
+        crt: "<path:secret/data/mas/drroc4/drgitopsapp/sls-mongo#ca.crt>"

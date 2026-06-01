@@ -1,0 +1,7 @@
+# Do not commit files containing real secrets
+*.real.yaml
+.env.local
+*.pem
+*.key
+*.crt
+license.dat

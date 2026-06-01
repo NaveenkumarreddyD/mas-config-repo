@@ -1,0 +1,17 @@
+merge-key: "mas/drroc4"
+
+account:
+  id: mas
+
+region:
+  id: lac1
+
+cluster:
+  id: drroc4
+  url: https://CHANGE_ME_DRROC4_API:6443
+  nonshared: true
+
+custom_labels:
+  environment: drroc4
+  platform: openshift
+  gitops-owner: devops

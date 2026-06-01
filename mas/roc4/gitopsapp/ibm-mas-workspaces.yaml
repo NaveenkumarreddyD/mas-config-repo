@@ -1,0 +1,5 @@
+merge-key: "mas/roc4/gitopsapp"
+
+ibm_mas_workspaces:
+  - mas_workspace_id: gitopswks
+    mas_workspace_name: "gitopswks"

@@ -1,0 +1,17 @@
+merge-key: "mas/roc4"
+
+account:
+  id: mas
+
+region:
+  id: lac1
+
+cluster:
+  id: roc4
+  url: https://CHANGE_ME_ROC4_API:6443
+  nonshared: true
+
+custom_labels:
+  environment: roc4
+  platform: openshift
+  gitops-owner: devops

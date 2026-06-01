@@ -1,0 +1,15 @@
+merge-key: "mas/roc4/gitopsapp"
+
+account:
+  id: mas
+
+region:
+  id: lac1
+
+cluster:
+  id: roc4
+  url: https://CHANGE_ME_ROC4_API:6443
+  nonshared: true
+
+instance:
+  id: gitopsapp

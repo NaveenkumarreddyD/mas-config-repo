@@ -1,0 +1,15 @@
+merge-key: "mas/drroc4/drgitopsapp"
+
+account:
+  id: mas
+
+region:
+  id: lac1
+
+cluster:
+  id: drroc4
+  url: https://CHANGE_ME_DRROC4_API:6443
+  nonshared: true
+
+instance:
+  id: drgitopsapp
