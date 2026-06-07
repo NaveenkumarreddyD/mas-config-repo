@@ -1,0 +1,16 @@
+
+merge-key: "mas/drroc4"
+
+ibm_dro:
+  dro_namespace: ibm-software-central
+  ibm_entitlement_key: "<path:secret/data/mas/drroc4/entitlement#image_pull_secret_b64>"
+  contactEmail: "Najeeb.Mehboob@spireenergy.com"
+  contactFirstName: "Najeeb"
+  contactLastName: "Mehboob"
+  dro_install_plan: Automatic
+  imo_install_plan: Automatic
+  run_sync_hooks: false
+  dro_cmm_setup: false
+sm:
+  aws_access_key_id: ""
+  aws_secret_access_key: ""
