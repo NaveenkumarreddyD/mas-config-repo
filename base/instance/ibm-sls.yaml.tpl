@@ -1,0 +1,53 @@
+
+merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
+
+# Dedicated Suite License Service for THIS instance (own SLS, not shared ibm-sls).
+#
+# Consumed by IBM's account-root generator (path glob {account}/{cluster}/*/ibm-sls.yaml),
+# which renders the 100-ibm-sls Application: installs the ibm-sls operator (Subscription on
+# channel ${SLS_CHANNEL}) and creates a LicenseService CR named "sls" in namespace
+# mas-${INSTANCE_ID}-sls. IBM charts are NOT modified — this is only the config the
+# generator reads.
+#
+# Entitlement: sls_entitlement_file is the license.dat content from Vault. The chart writes it
+# verbatim into Secret ibm-sls-sls-entitlement (stringData.entitlement). It MUST decode to a real
+# entitlement (contains INCREMENT/FEATURE lines) bound to THIS SLS, or the LicenseService reports
+# "No Features". Validate with platform-gitops/scripts/preflight-vault.sh drroc4.
+#
+# MongoDB: reuses THIS instance's dedicated Mongo (resource ${INSTANCE_ID}-mongo in namespace ${MONGO_NS}); SLS authenticates as the slsmongo user. The chart builds the
+# sls-mongo-credentials secret from sls_mongo_username/password, and spec.mongo is taken verbatim
+# from mongo_spec below. The CA is the dedicated Mongo's cert-manager CA, published to Vault
+# (.../sls-mongo#ca.crt) by platform-gitops/scripts/sync-mongo-ca.sh once Mongo is Ready.
+#
+# Registration handoff: run_sync_hooks is FALSE on purpose — IBM's 07-postsync job targets AWS
+# Secrets Manager, which this platform does not use. After the LicenseService reports Ready,
+# populate Vault (.../sls#registration_key|url|ca.crt) with:
+#     SLS_NS=mas-${INSTANCE_ID}-sls platform-gitops/scripts/harvest-sls-registration.sh drroc4
+# The Core SLSCfg (ibm-mas-suite-configs.yaml -> ${INSTANCE_ID}-sls-system) consumes those.
+ibm_sls:
+  # ---- traditional (non-ICN) licensing ----
+  sls_channel: "${SLS_CHANNEL}"
+  sls_install_plan: Automatic
+  sls_entitlement_file: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/license#license_file>"
+  ibm_entitlement_key: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/entitlement#image_pull_secret_b64>"
+  icr_cp_open: "icr.io/cpopen"
+  run_sync_hooks: false
+
+  # ---- MongoDB: dedicated in-cluster Mongo (NOT AWS DocumentDB) ----
+  mongodb_provider: community
+  sls_mongo_username: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls-mongo#username>"
+  sls_mongo_password: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls-mongo#password>"
+  sls_mongo_secret_name: sls-mongo-credentials
+
+  # passed verbatim into LicenseService spec.mongo (shape follows IBM example-config)
+  mongo_spec:
+    authMechanism: DEFAULT
+    configDb: admin
+    secretName: sls-mongo-credentials
+    retryWrites: false
+    nodes:
+      - host: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/mongo#host>"
+        port: 27017
+    certificates:
+      - alias: mongoca
+        crt: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls-mongo#ca.crt>"
