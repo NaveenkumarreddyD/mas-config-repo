@@ -1,5 +1,5 @@
 
-# mas-gitops-config (IBM-aligned, hub-and-spoke)
+# mas-config-repo (IBM-aligned, hub-and-spoke)
 
 ONE branch holds EVERY cluster. The single Account Root Application on the management cluster
 discovers each `mas/<cluster>/` directory via its `<account>/*` glob and deploys that cluster's

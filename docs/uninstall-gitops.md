@@ -1,7 +1,7 @@
 # Uninstall the current GitOps MAS install (drgitopsapp) — clean slate
 
 Goal: remove everything the GitOps install created for **drgitopsapp**, WITHOUT touching
-the Ansible install (**drmasapp**), the shared MongoDB Community, or the shared `ibm-sls`.
+the Ansible install (**drmasapp**) or shared cluster services that other instances still use.
 
 Your sync policy uses `prune: false`, so ArgoCD will NOT auto-delete on its own — do it explicitly,
 top-down, letting finalizers/post-delete hooks run.
@@ -9,9 +9,10 @@ top-down, letting finalizers/post-delete hooks run.
 ## 0. Safety check — confirm what belongs to GitOps vs Ansible
 ```bash
 oc get applications -n openshift-gitops | grep drgitopsapp     # GitOps apps
-oc get ns | grep -E 'mas-drgitopsapp|mongoce|ibm-sls|mas-drmasapp'
+oc get ns | grep -E 'mas-drgitopsapp|mongo-drgitops|mas-drmasapp|ibm-software-central|cert-manager'
 ```
-Touch only `mas-drgitopsapp-*`. Leave `mas-drmasapp-*`, `mongoce`, and `ibm-sls` alone.
+Touch only namespaces and Argo CD Applications for `drgitopsapp` unless you are intentionally
+removing the dedicated Mongo namespace as part of a full reset.
 
 ## 1. Tear down from the top of the app tree
 ```bash
@@ -35,13 +36,15 @@ oc patch <kind>/<name> -n mas-drgitopsapp-core --type=merge -p '{"metadata":{"fi
 ## 3. Delete the GitOps-only namespaces
 ```bash
 oc delete ns mas-drgitopsapp-core mas-drgitopsapp-manage mas-drgitopsapp-sls --wait=false
+# Optional full reset of this instance's dedicated Mongo:
+oc delete ns mongo-drgitops --wait=false
 ```
 
 ## 4. Do NOT remove shared/cluster-scoped pieces
-Leave these — Ansible/`drmasapp` and the platform need them:
+Leave these unless you are rebuilding the whole platform:
 - `ibm-operator-catalog` (shared catalog) — keep; the fresh install reuses it.
-- cert-manager, DRO operators — cluster-scoped, shared.
-- MongoDB Community (`mongoce`) and `ibm-sls` — shared dependencies.
+- cert-manager and DRO — cluster-scoped services when this is a shared cluster.
+- Vault, AVP, and OpenShift GitOps bootstrap resources.
 - The `platform-gitops` bootstrap (Vault, AVP, account-root Application) — keep; you re-point it.
 
 ## 5. Verify clean
@@ -49,4 +52,4 @@ Leave these — Ansible/`drmasapp` and the platform need them:
 oc get ns | grep mas-drgitopsapp        # should be empty
 oc get applications -n openshift-gitops | grep drgitopsapp   # should be empty
 ```
-Now follow `docs/greenfield-bringup.md`.
+Now follow `platform-gitops/docs/SETUP-GUIDE.md`.

@@ -2,7 +2,7 @@ merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 
 # JDBC is intentionally NOT configured here. IBM's 130-ibm-jdbc-config chart hardcodes
 # sslEnabled:true; our Oracle is non-SSL (TCP/1521). The non-SSL JdbcCfg is created by our
-# own chart in extras/jdbc-external/ (deployed by extras/jdbc-external-application.yaml) so the
+# own chart in platform-gitops/workloads/jdbc (deployed by the app-of-apps wave 40) so the
 # IBM charts stay untouched. sls + bas + mongo are registered through suite-configs.
 # NOTE: this instance runs its OWN dedicated SLS (base/instance/ibm-sls.yaml). The slscfg below
 # points Core at it; the registration_key/url/ca come from THIS instance's LicenseService
