@@ -9,7 +9,7 @@ region:
 
 cluster:
   id: ${CLUSTER_ID}
-  url: https://${API_HOST}:6443
+  url: ${CLUSTER_URL}
   nonshared: true
 
 custom_labels:
