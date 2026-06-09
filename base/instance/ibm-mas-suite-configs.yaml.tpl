@@ -21,6 +21,7 @@ ibm_mas_suite_configs:
     ca:
       crt: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls#ca.crt>"
 
+# BEGIN_OPTIONAL_BAS_CONFIG
   - mas_config_name: "${INSTANCE_ID}-bas-system"
     mas_config_chart: ibm-mas-bas-config
     mas_config_scope: system
@@ -39,6 +40,7 @@ ibm_mas_suite_configs:
     dro_api_token: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/dro#api_token>"
     dro_ca:
       crt: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/dro#ca.crt>"
+# END_OPTIONAL_BAS_CONFIG
 
   - mas_config_name: "${INSTANCE_ID}-mongo-system"
     mas_config_chart: ibm-mas-mongo-config

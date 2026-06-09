@@ -14,6 +14,9 @@ import os, re, sys, glob
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 VAR = re.compile(r"\$\{([A-Z0-9_]+)\}")
+OPTIONAL_BLOCK = re.compile(
+    r"(?ms)^# BEGIN_OPTIONAL_(?P<name>[A-Z0-9_]+)\n(?P<body>.*?)^# END_OPTIONAL_(?P=name)\n?"
+)
 
 def load_env(path):
     env = {}
@@ -26,6 +29,11 @@ def load_env(path):
     return env
 
 def render(text, env, src):
+    def optional(m):
+        key = f"ENABLE_{m.group('name')}"
+        enabled = str(env.get(key, "false")).lower() in ("1", "true", "yes")
+        return m.group("body") if enabled else ""
+    text = OPTIONAL_BLOCK.sub(optional, text)
     missing = sorted({m.group(1) for m in VAR.finditer(text) if m.group(1) not in env})
     if missing: sys.exit(f"ERROR: {src}: unset variables {missing}")
     return VAR.sub(lambda m: env[m.group(1)], text)

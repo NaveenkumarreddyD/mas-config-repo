@@ -21,24 +21,6 @@ ibm_mas_suite_configs:
     ca:
       crt: "<path:secret/data/mas/drroc4/drgitopsapp/sls#ca.crt>"
 
-  - mas_config_name: "drgitopsapp-bas-system"
-    mas_config_chart: ibm-mas-bas-config
-    mas_config_scope: system
-    mas_workspace_id:
-    mas_application_id:
-    mas_config_kind: "bascfgs"
-    mas_config_api_version: "config.mas.ibm.com"
-    use_postdelete_hooks: true
-    # BAS = DRO integration. Endpoint/token/CA are harvested from the shared DRO into Vault
-    # by platform-gitops/scripts/harvest-dro-registration.sh (like the SLS handoff).
-    dro_endpoint_url: "<path:secret/data/mas/drroc4/drgitopsapp/dro#url>"
-    dro_contact:
-      email: "Najeeb.Mehboob@spireenergy.com"
-      first_name: "Najeeb"
-      last_name: "Mehboob"
-    dro_api_token: "<path:secret/data/mas/drroc4/drgitopsapp/dro#api_token>"
-    dro_ca:
-      crt: "<path:secret/data/mas/drroc4/drgitopsapp/dro#ca.crt>"
 
   - mas_config_name: "drgitopsapp-mongo-system"
     mas_config_chart: ibm-mas-mongo-config
