@@ -10,8 +10,8 @@ merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 # generator reads.
 #
 # Entitlement: sls_entitlement_file is the license.dat content from Vault. The chart writes it
-# verbatim into Secret ibm-sls-sls-entitlement (stringData.entitlement). It MUST decode to a real
-# entitlement (contains INCREMENT/FEATURE lines) bound to THIS SLS, or the LicenseService reports
+# verbatim into Secret ibm-sls-sls-entitlement (stringData.entitlement). It MUST be raw
+# entitlement text (contains INCREMENT/FEATURE lines) bound to THIS SLS, or the LicenseService reports
 # "No Features". Validate with platform-gitops/scripts/preflight-vault.sh drroc4.
 #
 # MongoDB: reuses THIS instance's dedicated Mongo (resource ${INSTANCE_ID}-mongo in namespace ${MONGO_NS}); SLS authenticates as the slsmongo user. The chart builds the
