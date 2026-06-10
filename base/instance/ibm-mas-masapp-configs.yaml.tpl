@@ -10,6 +10,9 @@ ibm_mas_masapp_configs:
 
     mas_manual_cert_mgmt: false
     run_sanity_test: false
+    global_secrets:
+      cryptoKey: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/manage-crypto#cryptoKey>"
+      cryptoxKey: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/manage-crypto#cryptoxKey>"
 
     mas_appws_spec:
       bindings:
@@ -24,6 +27,7 @@ ibm_mas_masapp_configs:
       settings:
         db:
           dbSchema: ${DB_SCHEMA}
+          encryptionSecret: ${INSTANCE_ID}-${WORKSPACE_ID}-manage-crypto
           tableSpace: ${DB_TABLESPACE}
           indexSpace: ${DB_INDEXSPACE}
         deployment:
