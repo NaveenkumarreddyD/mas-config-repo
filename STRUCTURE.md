@@ -8,9 +8,9 @@ base/cluster/*.tpl     cluster-scoped MAS config templates (operator catalog, cl
 base/instance/*.tpl    instance-scoped templates (suite, suite-configs, manage install,
                        workspace, masapp-configs, dedicated SLS)
 envs/<cluster>.env     ONE file per cluster — all variables (versions, IDs, namespaces,
-                       SHARED_CLUSTER flag, DB/timezone/storage settings)
+                       cluster ownership flags, DB/timezone/storage settings)
 render.py              substitutes envs/<cluster>.env into base/*.tpl -> mas/<cluster>/...
-                       (auto-skips cert-manager/DRO files on a shared cluster)
+                       (skips cert-manager/DRO only when ownership flags say GitOps does not own them)
 mas/<cluster>/...      rendered output that account-root globs and applies
 scripts/, docs/
 ```

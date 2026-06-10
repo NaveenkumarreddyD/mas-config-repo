@@ -38,6 +38,9 @@ def render(text, env, src):
     if missing: sys.exit(f"ERROR: {src}: unset variables {missing}")
     return VAR.sub(lambda m: env[m.group(1)], text)
 
+def truthy(value):
+    return str(value).lower() in ("1", "true", "yes")
+
 def write(path, text, mode=None):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     open(path, "w").write(text)
@@ -48,13 +51,15 @@ def render_one(name):
     envfile = os.path.join(HERE, "envs", f"{name}.env")
     if not os.path.exists(envfile): sys.exit(f"no env file: {envfile}")
     env = load_env(envfile); cid, iid = env["CLUSTER_ID"], env["INSTANCE_ID"]
-    # On a SHARED cluster these cluster-scoped apps collide with resources already
-    # installed by Ansible (cert-manager, DRO). The account-root generator gates
-    # them on file presence, so the robust fix is to NOT emit them at all — this
-    # replaces the old manual `rm mas/<cid>/redhat-cert-manager.yaml ibm-dro.yaml`.
-    shared = str(env.get("SHARED_CLUSTER", "false")).lower() in ("1", "true", "yes")
-    skip = {s.strip() for s in env.get(
-        "SHARED_CLUSTER_SKIP", "redhat-cert-manager.yaml,ibm-dro.yaml").split(",") if s.strip()}
+    # Cluster-scoped ownership is explicit. If another platform process owns one
+    # of these resources, do not render its file; IBM account-root gates those
+    # Applications on file presence. SHARED_CLUSTER_SKIP remains as a low-level
+    # compatibility override for any additional files that must be suppressed.
+    skip = {s.strip() for s in env.get("SHARED_CLUSTER_SKIP", "").split(",") if s.strip()}
+    if not truthy(env.get("GITOPS_OWNS_CERT_MANAGER", "true")):
+        skip.add("redhat-cert-manager.yaml")
+    if not truthy(env.get("GITOPS_OWNS_DRO", "true")):
+        skip.add("ibm-dro.yaml")
     # clean stale rendered output so removed templates don't leave orphan files
     import glob as _g
     for f in _g.glob(os.path.join(HERE, "mas", cid, "*.yaml")) + _g.glob(os.path.join(HERE, "mas", cid, iid, "*.yaml")):
@@ -62,14 +67,14 @@ def render_one(name):
     skipped = []
     for tpl in sorted(os.listdir(os.path.join(HERE, "base", "cluster"))):
         out = tpl[:-4]
-        if shared and out in skip:
+        if out in skip:
             skipped.append(out); continue
         write(os.path.join(HERE, "mas", cid, out),
               render(open(os.path.join(HERE, "base", "cluster", tpl)).read(), env, tpl))
     for tpl in sorted(os.listdir(os.path.join(HERE, "base", "instance"))):
         write(os.path.join(HERE, "mas", cid, iid, tpl[:-4]),
               render(open(os.path.join(HERE, "base", "instance", tpl)).read(), env, tpl))
-    note = f"  (shared cluster: skipped {', '.join(skipped)})" if skipped else ""
+    note = f"  (skipped {', '.join(skipped)})" if skipped else ""
     print(f"Rendered {name} -> mas/{cid}/{note}  (secrets are loaded from platform-gitops/scripts)")
 
 def main():
