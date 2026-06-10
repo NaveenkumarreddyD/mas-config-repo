@@ -30,6 +30,7 @@ ibm_mas_masapp_configs:
           autoGenerateEncryptionKeys: false
           defaultJMS: false
         languages:
+          baseLang: EN
           default: EN
         serverTimezone: America/Chicago
         customizationList: []
