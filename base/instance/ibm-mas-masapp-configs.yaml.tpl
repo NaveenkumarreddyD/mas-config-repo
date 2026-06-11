@@ -27,9 +27,12 @@ ibm_mas_masapp_configs:
       settings:
         db:
           dbSchema: ${DB_SCHEMA}
-          encryptionSecret: ${INSTANCE_ID}-${WORKSPACE_ID}-manage-crypto
-          tableSpace: ${DB_TABLESPACE}
-          indexSpace: ${DB_INDEXSPACE}
+          encryptionSecret: ${WORKSPACE_ID}-manage-encryptionsecret
+          maxinst:
+            tableSpace: ${DB_TABLESPACE}
+            indexSpace: ${DB_INDEXSPACE}
+            demodata: false
+            bypassUpgradeVersionCheck: false
         deployment:
           autoGenerateEncryptionKeys: false
           defaultJMS: false

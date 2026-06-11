@@ -27,9 +27,12 @@ ibm_mas_masapp_configs:
       settings:
         db:
           dbSchema: maximo
-          encryptionSecret: drgitopsapp-drgitopswks-manage-crypto
-          tableSpace: MAX_DATA
-          indexSpace: MAX_INDEX
+          encryptionSecret: drgitopswks-manage-encryptionsecret
+          maxinst:
+            tableSpace: MAX_DATA
+            indexSpace: MAX_INDEX
+            demodata: false
+            bypassUpgradeVersionCheck: false
         deployment:
           autoGenerateEncryptionKeys: false
           defaultJMS: false
