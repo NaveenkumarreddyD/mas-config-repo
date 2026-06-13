@@ -1,4 +1,4 @@
-# mas-config-repo — structure (start here)
+# mas-gitops-config — structure (start here)
 
 Declarative MAS configuration consumed by the platform-gitops `account-root` Application.
 Kept SEPARATE from platform-gitops on purpose (MAS config vs platform/infra).
