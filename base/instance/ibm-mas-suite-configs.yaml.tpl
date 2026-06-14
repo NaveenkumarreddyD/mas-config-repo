@@ -6,7 +6,8 @@ merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 # IBM charts stay untouched. sls + bas + mongo are registered through suite-configs.
 # NOTE: this instance runs its OWN dedicated SLS (base/instance/ibm-sls.yaml). The slscfg below
 # points Core at it; the registration_key/url/ca come from THIS instance's LicenseService
-# (namespace mas-drgitopsapp-sls) via harvest-sls-registration.sh (SLS_NS=mas-drgitopsapp-sls).
+# (namespace mas-${INSTANCE_ID}-sls) and are synced into Vault by
+# platform-gitops/scripts/sync-runtime-registration.sh.
 ibm_mas_suite_configs:
   - mas_config_name: "${INSTANCE_ID}-sls-system"
     mas_config_chart: ibm-mas-sls-config
@@ -31,7 +32,7 @@ ibm_mas_suite_configs:
     mas_config_api_version: "config.mas.ibm.com"
     use_postdelete_hooks: true
     # BAS = DRO integration. Endpoint/token/CA are harvested from the shared DRO into Vault
-    # by platform-gitops/scripts/harvest-dro-registration.sh (like the SLS handoff).
+    # into Vault by platform-gitops/scripts/sync-runtime-registration.sh (DRO + SLS handoff).
     dro_endpoint_url: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/dro#url>"
     dro_contact:
       email: "${DRO_CONTACT_EMAIL}"
