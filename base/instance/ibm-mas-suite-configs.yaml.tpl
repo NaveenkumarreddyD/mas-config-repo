@@ -9,6 +9,7 @@ merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 # (namespace mas-${INSTANCE_ID}-sls) and are synced into Vault by
 # platform-gitops/scripts/sync-runtime-registration.sh.
 ibm_mas_suite_configs:
+# BEGIN_OPTIONAL_SLS_CONFIG
   - mas_config_name: "${INSTANCE_ID}-sls-system"
     mas_config_chart: ibm-mas-sls-config
     mas_config_scope: system
@@ -21,6 +22,7 @@ ibm_mas_suite_configs:
     url: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls#url>"
     ca:
       crt: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls#ca.crt>"
+# END_OPTIONAL_SLS_CONFIG
 
 # BEGIN_OPTIONAL_BAS_CONFIG
   - mas_config_name: "${INSTANCE_ID}-bas-system"

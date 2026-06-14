@@ -9,18 +9,6 @@ merge-key: "mas/drroc4/drgitopsapp"
 # (namespace mas-drgitopsapp-sls) and are synced into Vault by
 # platform-gitops/scripts/sync-runtime-registration.sh.
 ibm_mas_suite_configs:
-  - mas_config_name: "drgitopsapp-sls-system"
-    mas_config_chart: ibm-mas-sls-config
-    mas_config_scope: system
-    mas_workspace_id:
-    mas_application_id:
-    mas_config_kind: "slscfgs"
-    mas_config_api_version: "config.mas.ibm.com"
-    use_postdelete_hooks: true
-    registration_key: "<path:secret/data/mas/drroc4/drgitopsapp/sls#registration_key>"
-    url: "<path:secret/data/mas/drroc4/drgitopsapp/sls#url>"
-    ca:
-      crt: "<path:secret/data/mas/drroc4/drgitopsapp/sls#ca.crt>"
 
 
   - mas_config_name: "drgitopsapp-mongo-system"

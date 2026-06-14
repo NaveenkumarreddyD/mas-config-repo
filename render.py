@@ -18,6 +18,11 @@ OPTIONAL_BLOCK = re.compile(
     r"(?ms)^# BEGIN_OPTIONAL_(?P<name>[A-Z0-9_]+)\n(?P<body>.*?)^# END_OPTIONAL_(?P=name)\n?"
 )
 
+INSTANCE_TEMPLATE_FLAGS = {
+    "ibm-mas-masapp-configs.yaml": "ENABLE_MANAGE",
+    "ibm-mas-masapp-manage-install.yaml": "ENABLE_MANAGE",
+}
+
 def load_env(path):
     env = {}
     for line in open(path):
@@ -75,10 +80,17 @@ def render_one(name):
             skipped.append(out); continue
         write(os.path.join(HERE, "mas", cid, out),
               render(open(os.path.join(HERE, "base", "cluster", tpl)).read(), env, tpl))
+    instance_skipped = []
     for tpl in sorted(os.listdir(os.path.join(HERE, "base", "instance"))):
-        write(os.path.join(HERE, "mas", cid, iid, tpl[:-4]),
+        out = tpl[:-4]
+        flag = INSTANCE_TEMPLATE_FLAGS.get(out)
+        if flag and not truthy(env.get(flag, "false")):
+            instance_skipped.append(out)
+            continue
+        write(os.path.join(HERE, "mas", cid, iid, out),
               render(open(os.path.join(HERE, "base", "instance", tpl)).read(), env, tpl))
-    note = f"  (skipped {', '.join(skipped)})" if skipped else ""
+    all_skipped = skipped + instance_skipped
+    note = f"  (skipped {', '.join(all_skipped)})" if all_skipped else ""
     print(f"Rendered {name} -> mas/{cid}/{note}  (secrets are loaded from platform-gitops/scripts)")
 
 def main():
