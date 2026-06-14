@@ -36,7 +36,11 @@ def render(text, env, src):
     text = OPTIONAL_BLOCK.sub(optional, text)
     missing = sorted({m.group(1) for m in VAR.finditer(text) if m.group(1) not in env})
     if missing: sys.exit(f"ERROR: {src}: unset variables {missing}")
-    return VAR.sub(lambda m: env[m.group(1)], text)
+    rendered = VAR.sub(lambda m: env[m.group(1)], text)
+    if "CHANGE_ME" in rendered:
+        bad = sorted({line.strip() for line in rendered.splitlines() if "CHANGE_ME" in line})
+        sys.exit(f"ERROR: {src}: rendered output still contains placeholders: {bad}")
+    return rendered
 
 def truthy(value):
     return str(value).lower() in ("1", "true", "yes")
