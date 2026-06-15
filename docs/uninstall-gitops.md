@@ -1,15 +1,15 @@
 # Uninstall the current GitOps MAS install (drgitopsapp) — clean slate
 
-Goal: remove everything the GitOps install created for **drgitopsapp**, WITHOUT touching
-the Ansible install (**drmasapp**) or shared cluster services that other instances still use.
+Goal: remove everything the GitOps install created for **drgitopsapp**, without touching
+shared cluster services that other instances still use.
 
 Your sync policy uses `prune: false`, so ArgoCD will NOT auto-delete on its own — do it explicitly,
 top-down, letting finalizers/post-delete hooks run.
 
-## 0. Safety check — confirm what belongs to GitOps vs Ansible
+## 0. Safety check — confirm what belongs to this GitOps instance
 ```bash
 oc get applications -n openshift-gitops | grep drgitopsapp     # GitOps apps
-oc get ns | grep -E 'mas-drgitopsapp|mongo-drgitops|mas-drmasapp|ibm-software-central|cert-manager'
+oc get ns | grep -E 'mas-drgitopsapp|mongo-drgitops|ibm-software-central|cert-manager'
 ```
 Touch only namespaces and Argo CD Applications for `drgitopsapp` unless you are intentionally
 removing the dedicated Mongo namespace as part of a full reset.
@@ -52,4 +52,4 @@ Leave these unless you are rebuilding the whole platform:
 oc get ns | grep mas-drgitopsapp        # should be empty
 oc get applications -n openshift-gitops | grep drgitopsapp   # should be empty
 ```
-Now follow `platform-gitops/docs/SETUP-GUIDE.md`.
+Now follow `platform-gitops/DEPLOY.md`.
