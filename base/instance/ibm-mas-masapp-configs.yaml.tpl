@@ -19,11 +19,11 @@ ibm_mas_masapp_configs:
         jdbc: system
       components:
         base:
-          version: latest
+          version: ${MANAGE_COMPONENT_VERSION}
         utilities:
-          version: latest
+          version: ${MANAGE_COMPONENT_VERSION}
         spatial:
-          version: latest
+          version: ${MANAGE_COMPONENT_VERSION}
       settings:
         db:
           dbSchema: ${DB_SCHEMA}
