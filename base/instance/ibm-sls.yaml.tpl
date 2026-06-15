@@ -22,7 +22,7 @@ merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 # Registration handoff: run_sync_hooks is FALSE on purpose — IBM's 07-postsync job targets AWS
 # Secrets Manager, which this platform does not use. After the LicenseService reports Ready,
 # populate Vault (.../sls#registration_key|url|ca.crt) with:
-#     platform-gitops/scripts/sync-runtime-registration.sh mas-config-repo/envs/${CLUSTER_ID}.env
+#     platform-gitops/scripts/sync-runtime-registration.sh mas-gitops-config/envs/${CLUSTER_ID}.env
 # The Core SLSCfg (ibm-mas-suite-configs.yaml -> ${INSTANCE_ID}-sls-system) consumes those.
 ibm_sls:
   # ---- traditional (non-ICN) licensing ----

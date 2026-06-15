@@ -22,7 +22,7 @@ merge-key: "mas/drroc4/drgitopsapp"
 # Registration handoff: run_sync_hooks is FALSE on purpose — IBM's 07-postsync job targets AWS
 # Secrets Manager, which this platform does not use. After the LicenseService reports Ready,
 # populate Vault (.../sls#registration_key|url|ca.crt) with:
-#     platform-gitops/scripts/sync-runtime-registration.sh mas-config-repo/envs/drroc4.env
+#     platform-gitops/scripts/sync-runtime-registration.sh mas-gitops-config/envs/drroc4.env
 # The Core SLSCfg (ibm-mas-suite-configs.yaml -> drgitopsapp-sls-system) consumes those.
 ibm_sls:
   # ---- traditional (non-ICN) licensing ----
