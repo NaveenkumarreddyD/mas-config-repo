@@ -34,7 +34,7 @@ ibm_mas_masapp_configs:
             demodata: false
             bypassUpgradeVersionCheck: false
         deployment:
-          autoGenerateEncryptionKeys: false
+          autoGenerateEncryptionKeys: ${MANAGE_AUTO_GENERATE_ENCRYPTION_KEYS}
           defaultJMS: false
         languages:
           baseLang: EN
