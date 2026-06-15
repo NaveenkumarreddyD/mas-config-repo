@@ -10,7 +10,7 @@ ibm_mas_suite:
   icr_cp_open: "icr.io/cpopen"
   mas_install_plan: Automatic
   mas_operational_mode: ${OPERATIONAL_MODE}
-  mas_feature_usage: true
-  mas_deployment_progression: true
-  mas_usability_metrics: true
+  mas_feature_usage: ${MAS_FEATURE_USAGE}
+  mas_deployment_progression: ${MAS_DEPLOYMENT_PROGRESSION}
+  mas_usability_metrics: ${MAS_USABILITY_METRICS}
   mas_manual_cert_mgmt: false
