@@ -13,4 +13,5 @@ ibm_mas_suite:
   mas_feature_usage: ${MAS_FEATURE_USAGE}
   mas_deployment_progression: ${MAS_DEPLOYMENT_PROGRESSION}
   mas_usability_metrics: ${MAS_USABILITY_METRICS}
+  mas_contract_performance: ${MAS_CONTRACT_PERFORMANCE}
   mas_manual_cert_mgmt: false
