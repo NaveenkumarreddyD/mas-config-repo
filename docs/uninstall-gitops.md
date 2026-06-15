@@ -16,28 +16,20 @@ removing the dedicated Mongo namespace as part of a full reset.
 
 ## 1. Tear down from the top of the app tree
 ```bash
-# instance config + apps first (let post-delete hooks remove the MAS CRs cleanly)
-for app in $(oc get applications -n openshift-gitops -o name | grep drgitopsapp); do
-  argocd app delete "${app#application.argoproj.io/}" --cascade --yes
-done
-# then the account/cluster/instance root apps
-argocd app delete ibm-mas-account-root --cascade --yes 2>/dev/null || true
+cd platform-gitops
+./scripts/delete-mas-instance.sh --confirm ../mas-gitops-config/envs/drroc4.env
 ```
-Wait for the `mas-drgitopsapp-core` / `-manage` / `-sls` CRs (Suite, ManageApp/Workspace,
-JdbcCfg/SlsCfg/MongoCfg, LicenseService) to be gone before deleting namespaces.
+For a full reset of this instance's dedicated MongoDB, add `--include-mongo`.
+Only add `--include-dro` when `ibm-software-central` is dedicated to this GitOps instance.
 
 ## 2. Clear stuck finalizers (only if a CR/namespace hangs Terminating)
 ```bash
-oc get suite,manageapp,manageworkspace,jdbccfg,slscfg,mongocfg -n mas-drgitopsapp-core 2>/dev/null
-# if one is stuck:
-oc patch <kind>/<name> -n mas-drgitopsapp-core --type=merge -p '{"metadata":{"finalizers":[]}}'
+./scripts/delete-mas-instance.sh --confirm ../mas-gitops-config/envs/drroc4.env
 ```
 
 ## 3. Delete the GitOps-only namespaces
 ```bash
-oc delete ns mas-drgitopsapp-core mas-drgitopsapp-manage mas-drgitopsapp-sls --wait=false
-# Optional full reset of this instance's dedicated Mongo:
-oc delete ns mongo-drgitops --wait=false
+./scripts/delete-mas-instance.sh --confirm --include-mongo ../mas-gitops-config/envs/drroc4.env
 ```
 
 ## 4. Do NOT remove shared/cluster-scoped pieces
