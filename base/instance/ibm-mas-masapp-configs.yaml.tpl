@@ -8,7 +8,7 @@ ibm_mas_masapp_configs:
     mas_app_ws_kind: ManageWorkspace
     mas_workspace_id: ${WORKSPACE_ID}
 
-    mas_manual_cert_mgmt: false
+    mas_manual_cert_mgmt: true
     run_sanity_test: false
     global_secrets:
       MXE_SECURITY_CRYPTO_KEY: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/manage-crypto#cryptoKey>"

@@ -13,5 +13,5 @@ ibm_suite_app_manage_install:
   mas_app_kind: ManageApp
   mas_app_install_plan: Automatic
   run_sync_hooks: false
-  mas_manual_cert_mgmt: false
+  mas_manual_cert_mgmt: true
   mas_app_spec: {}
