@@ -36,7 +36,7 @@ ibm_mas_masapp_configs:
             bypassUpgradeVersionCheck: false
         languages:
           baseLang: EN
-          default: EN
+          secondaryLangs: []
         customizationList: []
         deployment:
           autoGenerateEncryptionKeys: true
