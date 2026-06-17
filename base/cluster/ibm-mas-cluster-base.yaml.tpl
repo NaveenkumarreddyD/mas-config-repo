@@ -9,7 +9,7 @@ region:
 cluster:
   id: ${CLUSTER_ID}
   url: ${CLUSTER_URL}
-  nonshared: true
+  nonshared: ""
 
 custom_labels:
   environment: ${CLUSTER_ID}
