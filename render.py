@@ -17,6 +17,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 # env value if set, otherwise the inline default). Defaults let the shared template carry sensible
 # per-env-overridable values (e.g. PVC sizes, replicas) without forcing every env to declare them.
 VAR = re.compile(r"\$\{([A-Z0-9_]+)(?::-([^}]*))?\}")
+# Conditional block: {{IF_FALSE VAR}} ... {{END_IF}} renders the body ONLY when env[VAR] is NOT
+# truthy. Used for mutually-exclusive config — e.g. omit the global_secrets crypto Vault path when
+# MANAGE_AUTO_GENERATE_ENCRYPTION_KEYS=true (MAS generates its own keys, so providing them is
+# redundant and would add an unwanted AVP dependency on the manage-crypto secret).
+IF_FALSE = re.compile(r"^[ \t]*\{\{IF_FALSE ([A-Z0-9_]+)\}\}[ \t]*\n(.*?)\n[ \t]*\{\{END_IF\}\}[ \t]*\n", re.DOTALL | re.MULTILINE)
 
 # Fully declarative: every cluster/instance config + app renders for every cluster. There are NO
 # ENABLE_* staging toggles. Runtime-dependent configs (SLSCfg/BASCfg) simply sit Degraded until
@@ -34,7 +39,12 @@ def load_env(path):
             env[k.strip()] = v
     return env
 
+def strip_conditionals(text, env):
+    # Keep the {{IF_FALSE VAR}} body only when env[VAR] is NOT truthy; drop the whole block otherwise.
+    return IF_FALSE.sub(lambda m: "" if truthy(env.get(m.group(1), "")) else m.group(2) + "\n", text)
+
 def render(text, env, src):
+    text = strip_conditionals(text, env)
     # Only vars WITHOUT an inline default are required. ${VAR:-default} is always satisfiable.
     missing = sorted({m.group(1) for m in VAR.finditer(text)
                       if m.group(1) not in env and m.group(2) is None})

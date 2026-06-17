@@ -9,9 +9,11 @@ ibm_mas_masapp_configs:
 
     mas_manual_cert_mgmt: true
     run_sanity_test: false
+{{IF_FALSE MANAGE_AUTO_GENERATE_ENCRYPTION_KEYS}}
     global_secrets:
       MXE_SECURITY_CRYPTO_KEY: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/manage-crypto#cryptoKey>"
       MXE_SECURITY_CRYPTOX_KEY: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/manage-crypto#cryptoxKey>"
+{{END_IF}}
 
     mas_appws_spec:
       bindings:

@@ -9,9 +9,6 @@ ibm_mas_masapp_configs:
 
     mas_manual_cert_mgmt: true
     run_sanity_test: false
-    global_secrets:
-      MXE_SECURITY_CRYPTO_KEY: "<path:secret/data/mas/drroc4/drgitopsapp/manage-crypto#cryptoKey>"
-      MXE_SECURITY_CRYPTOX_KEY: "<path:secret/data/mas/drroc4/drgitopsapp/manage-crypto#cryptoxKey>"
 
     mas_appws_spec:
       bindings:
