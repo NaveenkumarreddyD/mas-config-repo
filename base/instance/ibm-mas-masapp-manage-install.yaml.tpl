@@ -1,4 +1,3 @@
-
 merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 
 ibm_suite_app_manage_install:

@@ -1,4 +1,3 @@
-
 merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}"
 
 redhat_cert_manager:

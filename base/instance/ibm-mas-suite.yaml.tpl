@@ -1,4 +1,3 @@
-
 merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}"
 
 ibm_mas_suite:
@@ -10,8 +9,6 @@ ibm_mas_suite:
   icr_cp_open: "icr.io/cpopen"
   mas_install_plan: Automatic
   mas_operational_mode: ${OPERATIONAL_MODE}
-  # Usage reporting is ON by default (DRO/BAS is always deployed). Hardcoded here rather than as env
-  # toggles. mas_contract_performance is IBM license-compliance reporting; the rest are telemetry.
   mas_feature_usage: true
   mas_deployment_progression: true
   mas_usability_metrics: true

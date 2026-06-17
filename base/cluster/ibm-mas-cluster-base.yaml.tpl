@@ -1,4 +1,3 @@
-
 merge-key: "${ACCOUNT_ID}/${CLUSTER_ID}"
 
 account:

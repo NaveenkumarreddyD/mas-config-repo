@@ -13,7 +13,10 @@ Usage:
 import os, re, sys, glob
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-VAR = re.compile(r"\$\{([A-Z0-9_]+)\}")
+# Supports ${VAR} (required: must be set in the env file) and ${VAR:-default} (optional: uses the
+# env value if set, otherwise the inline default). Defaults let the shared template carry sensible
+# per-env-overridable values (e.g. PVC sizes, replicas) without forcing every env to declare them.
+VAR = re.compile(r"\$\{([A-Z0-9_]+)(?::-([^}]*))?\}")
 
 # Fully declarative: every cluster/instance config + app renders for every cluster. There are NO
 # ENABLE_* staging toggles. Runtime-dependent configs (SLSCfg/BASCfg) simply sit Degraded until
@@ -32,9 +35,11 @@ def load_env(path):
     return env
 
 def render(text, env, src):
-    missing = sorted({m.group(1) for m in VAR.finditer(text) if m.group(1) not in env})
+    # Only vars WITHOUT an inline default are required. ${VAR:-default} is always satisfiable.
+    missing = sorted({m.group(1) for m in VAR.finditer(text)
+                      if m.group(1) not in env and m.group(2) is None})
     if missing: sys.exit(f"ERROR: {src}: unset variables {missing}")
-    rendered = VAR.sub(lambda m: env[m.group(1)], text)
+    rendered = VAR.sub(lambda m: env[m.group(1)] if m.group(1) in env else m.group(2), text)
     if "CHANGE_ME" in rendered:
         bad = sorted({line.strip() for line in rendered.splitlines() if "CHANGE_ME" in line})
         sys.exit(f"ERROR: {src}: rendered output still contains placeholders: {bad}")
