@@ -40,6 +40,14 @@ def render(text, env, src):
                       if m.group(1) not in env and m.group(2) is None})
     if missing: sys.exit(f"ERROR: {src}: unset variables {missing}")
     rendered = VAR.sub(lambda m: env[m.group(1)] if m.group(1) in env else m.group(2), text)
+    # Defensive: fail loudly if any ${...} survived (e.g. rendered by an OLD render.py without
+    # ${VAR:-default} support). An unsubstituted placeholder produces invalid YAML that ArgoCD's
+    # ApplicationSet generator rejects ("did not find expected ',' or '}'"). Note: AVP secret refs
+    # use <path:...>, not ${...}, so they are unaffected.
+    leftover = sorted(set(re.findall(r"\$\{[^}]*\}", rendered)))
+    if leftover:
+        sys.exit(f"ERROR: {src}: unsubstituted placeholders remain: {leftover} "
+                 f"(update render.py — it needs ${{VAR:-default}} support)")
     if "CHANGE_ME" in rendered:
         bad = sorted({line.strip() for line in rendered.splitlines() if "CHANGE_ME" in line})
         sys.exit(f"ERROR: {src}: rendered output still contains placeholders: {bad}")
