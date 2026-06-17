@@ -1,0 +1,84 @@
+
+merge-key: "mas/drroc4/drgitopsapp"
+
+ibm_mas_masapp_configs:
+  - mas_app_id: manage
+    mas_app_namespace: mas-drgitopsapp-manage
+    mas_app_ws_apiversion: apps.mas.ibm.com/v1
+    mas_app_ws_kind: ManageWorkspace
+    mas_workspace_id: drgitopswks
+
+    mas_manual_cert_mgmt: true
+    run_sanity_test: false
+    global_secrets:
+      MXE_SECURITY_CRYPTO_KEY: "<path:secret/data/mas/drroc4/drgitopsapp/manage-crypto#cryptoKey>"
+      MXE_SECURITY_CRYPTOX_KEY: "<path:secret/data/mas/drroc4/drgitopsapp/manage-crypto#cryptoxKey>"
+
+    mas_appws_spec:
+      bindings:
+        jdbc: system
+      components:
+        # base is pinned to the Manage version (must match the reused DB schema: 8.7.24).
+        base:
+          version: 8.7.24
+        # Add-ons have their OWN version streams (NOT the Manage version). Pinning them to 8.7.24
+        # fails the vmanage webhook ("Maximo Spatial version 8.7.24 is not compatible with Manage
+        # 8.7.24"). Use 'latest' — the Manage operator resolves it to the version shipped in the
+        # pinned catalog (v9-250925), which IS compatible. This is the official IBM gitops pattern.
+        utilities:
+          version: latest
+        spatial:
+          version: latest
+      settings:
+        db:
+          dbSchema: maximo
+          encryptionSecret: drgitopswks-manage-encryptionsecret
+          maxinst:
+            tableSpace: MAX_DATA
+            indexSpace: MAX_INDEX
+            demodata: false
+            bypassUpgradeVersionCheck: false
+        deployment:
+          autoGenerateEncryptionKeys: true
+          defaultJMS: false
+        languages:
+          baseLang: EN
+          default: EN
+        serverTimezone: America/Chicago
+        customizationList: []
+        persistentVolumes:
+          - pvcName: jmsstore
+            mountPath: /jmsstore
+            size: 20Gi
+            storageClassName: isilon
+            accessModes:
+              - ReadWriteMany
+          - pvcName: globaldir
+            mountPath: /globaldir
+            size: 20Gi
+            storageClassName: isilon
+            accessModes:
+              - ReadWriteMany
+        serverBundles:
+          - name: ui
+            bundleType: ui
+            isDefault: true
+            replica: 1
+            routeSubDomain: ui
+          - name: cron
+            bundleType: cron
+            isDefault: false
+            replica: 1
+            routeSubDomain: cron
+          - name: mea
+            bundleType: mea
+            isDefault: false
+            replica: 1
+            routeSubDomain: mea
+          - name: jms
+            bundleType: standalonejms
+            isDefault: false
+            replica: 1
+            routeSubDomain: jms
+
+    storage_class_definitions: {}

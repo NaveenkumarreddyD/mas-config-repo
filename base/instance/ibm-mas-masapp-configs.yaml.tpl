@@ -25,6 +25,10 @@ ibm_mas_masapp_configs:
         spatial:
           version: ${MANAGE_COMPONENT_VERSION}
       settings:
+        # AIO OFF so the explicit serverBundles below take effect. With AIO on (or with no
+        # serverBundles), the operator collapses everything into a single 'all' server.
+        aio:
+          install: false
         db:
           dbSchema: ${DB_SCHEMA}
           encryptionSecret: ${WORKSPACE_ID}-manage-encryptionsecret
@@ -33,47 +37,52 @@ ibm_mas_masapp_configs:
             indexSpace: ${DB_INDEXSPACE}
             demodata: false
             bypassUpgradeVersionCheck: false
-        deployment:
-          autoGenerateEncryptionKeys: ${MANAGE_AUTO_GENERATE_ENCRYPTION_KEYS}
-          defaultJMS: false
         languages:
           baseLang: EN
           default: EN
-        serverTimezone: ${SERVER_TIMEZONE}
         customizationList: []
-        persistentVolumes:
-          - pvcName: jmsstore
-            mountPath: /jmsstore
-            size: 20Gi
-            storageClassName: ${RWX_STORAGE_CLASS}
-            accessModes:
-              - ReadWriteMany
-          - pvcName: globaldir
-            mountPath: /globaldir
-            size: 20Gi
-            storageClassName: ${RWX_STORAGE_CLASS}
-            accessModes:
-              - ReadWriteMany
-        serverBundles:
-          - name: ui
-            bundleType: ui
-            isDefault: true
-            replica: 1
-            routeSubDomain: ui
-          - name: cron
-            bundleType: cron
-            isDefault: false
-            replica: 1
-            routeSubDomain: cron
-          - name: mea
-            bundleType: mea
-            isDefault: false
-            replica: 1
-            routeSubDomain: mea
-          - name: jms
-            bundleType: standalonejms
-            isDefault: false
-            replica: 1
-            routeSubDomain: jms
+        # CRITICAL nesting: serverTimezone, persistentVolumes and serverBundles MUST live under
+        # settings.deployment. The ManageWorkspace CRD only reads them here; placed one level up
+        # (directly under settings) they are SILENTLY DROPPED — the operator then defaults to AIO
+        # (single 'all' server) and creates no PVCs (this is exactly the "no ui/cron/mea pods, no
+        # PVCs" symptom). Matches the official ibm-mas-masapp-configs structure.
+        deployment:
+          autoGenerateEncryptionKeys: ${MANAGE_AUTO_GENERATE_ENCRYPTION_KEYS}
+          defaultJMS: false
+          serverTimezone: ${SERVER_TIMEZONE}
+          persistentVolumes:
+            - pvcName: jmsstore
+              mountPath: /jmsstore
+              size: 20Gi
+              storageClassName: ${RWX_STORAGE_CLASS}
+              accessModes:
+                - ReadWriteMany
+            - pvcName: globaldir
+              mountPath: /globaldir
+              size: 20Gi
+              storageClassName: ${RWX_STORAGE_CLASS}
+              accessModes:
+                - ReadWriteMany
+          serverBundles:
+            - name: ui
+              bundleType: ui
+              isDefault: true
+              replica: 1
+              routeSubDomain: ui
+            - name: cron
+              bundleType: cron
+              isDefault: false
+              replica: 1
+              routeSubDomain: cron
+            - name: mea
+              bundleType: mea
+              isDefault: false
+              replica: 1
+              routeSubDomain: mea
+            - name: jms
+              bundleType: standalonejms
+              isDefault: false
+              replica: 1
+              routeSubDomain: jms
 
     storage_class_definitions: {}
