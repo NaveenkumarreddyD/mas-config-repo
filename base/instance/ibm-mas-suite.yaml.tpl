@@ -10,8 +10,10 @@ ibm_mas_suite:
   icr_cp_open: "icr.io/cpopen"
   mas_install_plan: Automatic
   mas_operational_mode: ${OPERATIONAL_MODE}
-  mas_feature_usage: ${MAS_FEATURE_USAGE}
-  mas_deployment_progression: ${MAS_DEPLOYMENT_PROGRESSION}
-  mas_usability_metrics: ${MAS_USABILITY_METRICS}
-  mas_contract_performance: ${MAS_CONTRACT_PERFORMANCE}
+  # Usage reporting is ON by default (DRO/BAS is always deployed). Hardcoded here rather than as env
+  # toggles. mas_contract_performance is IBM license-compliance reporting; the rest are telemetry.
+  mas_feature_usage: true
+  mas_deployment_progression: true
+  mas_usability_metrics: true
+  mas_contract_performance: true
   mas_manual_cert_mgmt: true
