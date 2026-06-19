@@ -35,14 +35,17 @@ ibm_mas_masapp_configs:
           baseLang: EN
           secondaryLangs: []
         customizationList: []
+        # Per IBM docs the pod resources block lives at settings.resources (NOT
+        # settings.deployment.resources). At the wrong path the ManageWorkspace structural
+        # schema prunes it on apply -> live CR never gets it -> permanent ArgoCD OutOfSync.
+        resources:
+          serverBundles:
+            requests: { cpu: "1", memory: "4Gi" }
+            limits:   { cpu: "6", memory: "10Gi" }
         deployment:
           autoGenerateEncryptionKeys: true
           defaultJMS: false
           serverTimezone: America/Chicago
-          resources:
-            serverBundles:
-              requests: { cpu: "1", memory: "4Gi" }
-              limits:   { cpu: "6", memory: "10Gi" }
           persistentVolumes:
             - { pvcName: jmsstore,  mountPath: /jmsstore,  size: 20Gi,  storageClassName: isilon, accessModes: [ReadWriteMany] }
             - { pvcName: globaldir, mountPath: /globaldir, size: 20Gi, storageClassName: isilon, accessModes: [ReadWriteMany] }
