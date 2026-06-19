@@ -16,6 +16,14 @@ ibm_mas_masapp_configs:
       components:
         base:
           version: latest
+        # hse = Health, Safety & Environment Manager (the rebranded Maximo for Oil & Gas).
+        # It ships the psdi.plusg.* classes (e.g. PlusGPersonSet). REQUIRED to match prod, whose
+        # data registers PERSON/other objects to plusg classes -> without hse the server can't
+        # load PlusGPersonSet at startup and crashes. Must match prod components exactly.
+        hse:
+          version: latest
+        oracleadapter:
+          version: latest
         utilities:
           version: latest
         spatial:
