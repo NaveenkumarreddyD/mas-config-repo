@@ -22,5 +22,8 @@ ibm_sls:
       - host: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/mongo#host>"
         port: 27017
     certificates:
+      # Single Mongo CA key for ALL consumers: SLS trusts the SAME pinned key Manage/MongoCfg use
+      # (mongo#ca.crt), not a separate sls-mongo#ca.crt copy. One trusted key = no chance of SLS
+      # and Manage disagreeing on the CA.
       - alias: mongoca
-        crt: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/sls-mongo#ca.crt>"
+        crt: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/mongo#ca.crt>"
