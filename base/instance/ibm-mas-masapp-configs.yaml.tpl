@@ -9,6 +9,14 @@ ibm_mas_masapp_configs:
 
     mas_manual_cert_mgmt: true
     run_sanity_test: false
+
+    # Per-bundle Liberty server.xml fragment (JMS client config for ui + cron). The chart creates a
+    # Secret per entry (data.server-custom.xml = base64); the ui/cron serverBundles reference it via
+    # additionalServerConfig.secretName. Set it ONCE in config (NOT the UI — ArgoCD reverts UI edits).
+    # Base64 is env-provided (cluster-specific: embeds the jms service host).
+    mas_app_server_bundles_combined_add_server_config:
+      ${WORKSPACE_ID}-manage-d--sb0--asc--sn:   "${MANAGE_UI_ASC_B64}"
+      ${WORKSPACE_ID}-manage-d--sb1--asc--sn: "${MANAGE_CRON_ASC_B64}"
 {{IF_FALSE MANAGE_AUTO_GENERATE_ENCRYPTION_KEYS}}
     global_secrets:
       MXE_SECURITY_CRYPTO_KEY: "<path:secret/data/${ACCOUNT_ID}/${CLUSTER_ID}/${INSTANCE_ID}/manage-crypto#cryptoKey>"
@@ -63,10 +71,34 @@ ibm_mas_masapp_configs:
             - { pvcName: jmsstore,  mountPath: /jmsstore,  size: ${MANAGE_JMSSTORE_SIZE:-20Gi},  storageClassName: ${RWX_STORAGE_CLASS}, accessModes: [ReadWriteMany] }
             - { pvcName: globaldir, mountPath: /globaldir, size: ${MANAGE_GLOBALDIR_SIZE:-20Gi}, storageClassName: ${RWX_STORAGE_CLASS}, accessModes: [ReadWriteMany] }
           serverBundles:
-            - { name: ui,     bundleType: ui,            isDefault: true,  isMobileTarget: true,   replica: 2, routeSubDomain: ui }
-            - { name: cron,   bundleType: cron,          isDefault: false, replica: 1, routeSubDomain: cron }
-            - { name: mea,    bundleType: mea,           isDefault: false, isUserSyncTarget: true,  replica: 2, routeSubDomain: mea }
-            - { name: report, bundleType: report,        isDefault: false, replica: 1, routeSubDomain: report }
-            - { name: jms,    bundleType: standalonejms, isDefault: false, replica: 1, routeSubDomain: jms }
+            - name: ui
+              bundleType: ui
+              isDefault: true
+              isMobileTarget: true
+              replica: 2
+              routeSubDomain: ui
+              additionalServerConfig: { secretName: ${WORKSPACE_ID}-manage-d--sb0--asc--sn }
+            - name: cron
+              bundleType: cron
+              isDefault: false
+              replica: 1
+              routeSubDomain: cron
+              additionalServerConfig: { secretName: ${WORKSPACE_ID}-manage-d--sb1--asc--sn }
+            - name: mea
+              bundleType: mea
+              isDefault: false
+              isUserSyncTarget: true
+              replica: 2
+              routeSubDomain: mea
+            - name: report
+              bundleType: report
+              isDefault: false
+              replica: 1
+              routeSubDomain: report
+            - name: jms
+              bundleType: standalonejms
+              isDefault: false
+              replica: 1
+              routeSubDomain: jms
 
     storage_class_definitions: {}
